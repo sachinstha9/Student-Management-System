@@ -1,0 +1,3 @@
+Command|Function
+exit|To exit program
+help|To get valid commands
