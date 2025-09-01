@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "common.hpp"
+#include "student.hpp"
 
 using namespace std;
 
@@ -13,6 +15,9 @@ int main()
 {
     string command = "";
     vector<string> comVector;
+    string value = "";
+
+    Student st;
 
     vector<vector<string>> defCommands = readTxtFile(COMMANDS_FILE);
 
@@ -31,6 +36,24 @@ int main()
 
         if (comVector[0] == "help") {
             printTable(defCommands);
+        }
+        else if (comVector[0] == "add") {
+            if (comVector[1] == "student") {
+                st.addStudent();
+            }
+        }
+        else if (comVector[0] == "show") {
+            if (comVector[1] == "student") {
+                st.showStudent();
+            }
+        }
+        else if (comVector[0] == "edit") {
+            if (comVector[1] == "student") {
+                cout << "Enter student's ID: ";
+                getline(cin, value);
+
+                st.editStudent(0, value);
+            }
         }
         else if (comVector[0] == "exit") {
             cout << "Good bye." << endl;

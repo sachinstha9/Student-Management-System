@@ -6,6 +6,8 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <ctime>
+#include <regex>
 
 #include "common.hpp"
 
@@ -24,6 +26,36 @@ vector<string> splitBySpace(string str) {
     }
 
     return words;
+}
+
+bool isValidDateFormat(const string& dateStr) {
+    static const regex pattern(R"(^\d{4}-\d{2}-\d{2}$)");
+    return regex_match(dateStr, pattern);
+}
+
+bool isValidEmail(const string& email) {
+    if (email.empty())
+        return false;
+
+    const regex pattern(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
+    return regex_match(email, pattern);
+}
+
+bool isValidNZMobileNumber(const string& number) {
+    regex localFormat("^02[0-9]{7,8}$");
+    regex internationalFormat("^\\+642[0-9]{7,8}$");
+
+    return regex_match(number, localFormat) || regex_match(number, internationalFormat);
+}
+
+string getTodayDate() {
+    time_t t = time(nullptr);
+    tm tm_buf{};
+    localtime_s(&tm_buf, &t);
+
+    ostringstream oss;
+    oss << put_time(&tm_buf, "%Y-%m-%d");
+    return oss.str();
 }
 
 void checkCommandValidity(string command, vector<vector<string>> defCommands) {
@@ -108,28 +140,140 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
     printBorder();
 }
 
-vector<vector<string>> readTxtFile(const string& filename) {
-    vector<::vector<string>> data;
+vector<vector<string>> readTxtFile(
+    const string& filename,
+    int colNumber,
+    const string& colValue
+) {
+    vector<vector<string>> data;
     ifstream inputFile(filename);
 
-    if (inputFile.is_open()) {
-        string line;
-        while (getline(inputFile, line)) {
-            vector<string> row;
-            stringstream ss(line);
-            string field;
+    if (!inputFile.is_open()) {
+        cerr << "Error: Unable to find the file." << endl;
+        return data;
+    }
 
-            while (getline(ss, field, '|')) {
-                row.push_back(field);
-            }
+    string line;
+    while (getline(inputFile, line)) {
+        vector<string> row;
+        stringstream ss(line);
+        string field;
+
+        while (getline(ss, field, '|')) {
+            row.push_back(field);
+        }
+
+        if (colNumber == -1 ||
+            (colNumber >= 0 && colNumber < row.size() && row[colNumber] == colValue)) {
             data.push_back(row);
         }
-        inputFile.close();
+    }
+
+    inputFile.close();
+    return data;
+}
+
+void writeTxtFile(const string& filename, const vector<vector<string>>& data, bool append) {
+    ofstream outputFile;
+
+    if (append) {
+        outputFile.open(filename, ios::out | ios::app);
+    }
+    else {
+        outputFile.open(filename, ios::out | ios::trunc);
+    }
+
+    if (outputFile.is_open()) {
+        for (const auto& row : data) {
+            for (size_t i = 0; i < row.size(); ++i) {
+                outputFile << row[i];
+                if (i < row.size() - 1) {
+                    outputFile << "|";
+                }
+            }
+            outputFile << "\n";
+        }
+        outputFile.close();
 
     }
     else {
-        cerr << "Error: Unable to find the file." << endl;
+        cerr << "Error: Unable to access data." << endl;
+    }
+}
+
+void updateTxtFile(
+    const string& filename,
+    size_t matchColumnIndex,
+    const string& matchValue,
+    const vector<string>& newRow
+) {
+    auto data = readTxtFile(filename);
+    bool found = false;
+
+    for (auto& row : data) {
+        if (row.size() > matchColumnIndex && row[matchColumnIndex] == matchValue) {
+            if (row.size() < newRow.size()) {
+                row.resize(newRow.size());
+            }
+
+            for (size_t i = 0; i < newRow.size(); ++i) {
+                if (newRow[i] != "")
+                    row[i] = newRow[i];
+            }
+
+            found = true;
+            break;
+        }
     }
 
-    return data;
+    if (found) {
+        writeTxtFile(filename, data, false);
+    }
+    else {
+        cout << "No details found." << endl;
+    }
+}
+
+
+int countRowsInFile(
+    const string& filename,
+    int colNumber,
+    const string& colValue,
+    char delimiter
+) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Failed to open file: " << filename << endl;
+        return -1;
+    }
+
+    string line;
+    int count = 0;
+
+    while (getline(file, line)) {
+        if (colNumber == -1) {
+            count++;
+        }
+        else {
+            stringstream ss(line);
+            string cell;
+            int currentCol = 0;
+            bool matched = false;
+
+            while (getline(ss, cell, delimiter)) {
+                if (currentCol == colNumber) {
+                    if (cell == colValue) {
+                        matched = true;
+                    }
+                    break;
+                }
+                currentCol++;
+            }
+
+            if (matched) count++;
+        }
+    }
+
+    file.close();
+    return count;
 }
