@@ -1,3 +1,6 @@
 Command|Function
 exit|To exit program
 help|To get valid commands
+add student|
+edit student|
+show student|

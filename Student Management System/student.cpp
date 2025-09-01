@@ -233,30 +233,30 @@ void Student::showStudent(int colNumber, string colValue) {
 }
 
 void Student::editStudent(int colNumber, string colValue) {
-	cout << "Fill out the details to edit details of student.\n" << endl;
+	cout << "Fill out the details to edit details of student." << endl;
 	cout << "Leave blank to leave it as it was.\n" << endl;
 
-	if (countRowsInFile(STUDENT_DETAILS, colNumber, colValue) != 1)
+	if (countRowsInFile(STUDENT_DETAILS, colNumber, colValue) != 1) {
 		cout << "Sorry, student with provided id doesn't exists." << endl;
 		return;
+	}
 
 	cout << "Name*: ";
 	getline(cin, name);
 	name = trim(name);
 
-
 	while (true) {
 		cout << "Grade*: ";
 		getline(cin, grade);
 
-		if (grade != "1" && grade != "2" && grade != "3" && grade != "4" && grade != "5" && grade != "6") {
+		if (grade.empty())
+			break;
+		else if (grade != "1" && grade != "2" && grade != "3" && grade != "4" && grade != "5" && grade != "6") {
 			cout << "This field value is invalid (Must be between 1 and 6)." << endl;
 			cout << "Press enter to type again or type 'q' to quit." << endl;
 
 			getline(cin, res);
 		}
-		else
-			break;
 
 		if (res == "q") {
 			res = "";
@@ -309,14 +309,14 @@ void Student::editStudent(int colNumber, string colValue) {
 		getline(cin, email);
 		email = trim(email);
 
-		if (!isValidEmail(email)) {
+		if (email.empty())
+			break;
+		else if (!isValidEmail(email)) {
 			cout << "This field value is invalid." << endl;
 			cout << "Press enter to type again or type 'q' to quit." << endl;
 
 			getline(cin, res);
 		}
-		else
-			break;
 
 		if (res == "q") {
 			res = "";
@@ -329,14 +329,14 @@ void Student::editStudent(int colNumber, string colValue) {
 		getline(cin, contact);
 		contact = trim(contact);
 
-		if (!isValidNZMobileNumber(contact)) {
+		if (contact.empty())
+			break;
+		else if (!isValidNZMobileNumber(contact)) {
 			cout << "This field value is invalid." << endl;
 			cout << "Press enter to type again or type 'q' to quit." << endl;
 
 			getline(cin, res);
 		}
-		else
-			break;
 
 		if (res == "q") {
 			res = "";
@@ -355,14 +355,14 @@ void Student::editStudent(int colNumber, string colValue) {
 		getline(cin, guardianContact);
 		guardianContact = trim(guardianContact);
 
-		if (!isValidNZMobileNumber(guardianContact)) {
+		if (guardianContact.empty())
+			break;
+		else if (!isValidNZMobileNumber(guardianContact)) {
 			cout << "This field value is invalid." << endl;
 			cout << "Press enter to type again or type 'q' to quit." << endl;
 
 			getline(cin, res);
 		}
-		else
-			break;
 
 		if (res == "q") {
 			res = "";
