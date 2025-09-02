@@ -1,3 +1,3 @@
 Id|Name|Grade|DOB|Address|Email|Contact|Guardian's Name|Guardian's Contact|Joined Date
 202509020|sachin|4|2023-02-01|nepal|sach@gmail.com|020434343|sachn|0203454272|2025-09-02
-
+202509022|ascas|4|2022-02-12|india|sac@gmail.com||sacsa|0203434534|2025-09-02

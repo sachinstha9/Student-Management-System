@@ -11,20 +11,20 @@ std::vector<std::vector<std::string>> readTxtFile(
     int colNumber = -1,
     const std::string& colValue = ""
 );
-void writeTxtFile(const std::string& filename, const std::vector<std::vector<std::string>>& data, bool append = true);
+bool writeTxtFile(const std::string& filename, const std::vector<std::vector<std::string>>& data, bool append = true);
 int countRowsInFile(
     const std::string& filename,
     int colNumber = -1,
     const std::string& colValue = "",
     char delimiter = '|'
 );
-void updateTxtFile(
+bool updateTxtFile(
     const std::string& filename,
     size_t matchColumnIndex,
     const std::string& matchValue,
     const std::vector<std::string>& newRow
 );
-void checkCommandValidity(std::string command, std::vector<std::vector<std::string>> defCommands);
+bool checkCommandValidity(std::string command, std::vector<std::vector<std::string>> defCommands);
 void printTable(const std::vector<std::vector<std::string>>& table, int sortByColumn = -1, bool ascending = true);
 std::string trim(const std::string& s);
 

@@ -31,9 +31,9 @@ private:
     //}
 public:
     std::vector<std::string> askDetails();
-    void addStudent();
+    bool addStudent();
     void showStudent(int colNumber = -1, std::string colValue = "");
-    void editStudent(int colNumber, std::string colValue);
+    bool editStudent(int colNumber, std::string colValue);
 };
 
 #endif

@@ -32,14 +32,20 @@ int main()
         command = trim(command);
         comVector = splitBySpace(command);
 
-        checkCommandValidity(command, defCommands);
+        if (!checkCommandValidity(command, defCommands)) {
+            cout << "Command invalid. Type 'help' to see valid commands." << endl;
+            continue;
+        }
 
         if (comVector[0] == "help") {
             printTable(defCommands);
         }
         else if (comVector[0] == "add") {
             if (comVector[1] == "student") {
-                st.addStudent();
+                if (st.addStudent())
+                    cout << "New student register successful." << endl;
+                else
+                    cout << "Register unsuccessful." << endl;
             }
         }
         else if (comVector[0] == "show") {
@@ -52,7 +58,10 @@ int main()
                 cout << "Enter student's ID: ";
                 getline(cin, value);
 
-                st.editStudent(0, value);
+                if (st.editStudent(0, value))
+                    cout << "Student " << value << " successful." << endl;
+                else
+                    cout << "Student " << value << " unsuccessful." << endl;
             }
         }
         else if (comVector[0] == "exit") {

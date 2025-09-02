@@ -217,13 +217,11 @@ vector<string> Student::askDetails() {
 
 	id = todayDate + to_string(totalNumOfS + 1);
 
-	cout << id;
-
 	return { id, name, grade, dob, address, email, contact, guardianName, guardianContact, joinedDate };
 }
 
-void Student::addStudent() {
-	writeTxtFile(STUDENT_DETAILS, { askDetails() });
+bool Student::addStudent() {
+	return writeTxtFile(STUDENT_DETAILS, { askDetails() });
 }
 
 void Student::showStudent(int colNumber, string colValue) {
@@ -232,13 +230,13 @@ void Student::showStudent(int colNumber, string colValue) {
 	printTable(studentDetails);
 }
 
-void Student::editStudent(int colNumber, string colValue) {
+bool Student::editStudent(int colNumber, string colValue) {
 	cout << "Fill out the details to edit details of student." << endl;
 	cout << "Leave blank to leave it as it was.\n" << endl;
 
 	if (countRowsInFile(STUDENT_DETAILS, colNumber, colValue) != 1) {
 		cout << "Sorry, student with provided id doesn't exists." << endl;
-		return;
+		return false;
 	}
 
 	cout << "Name*: ";
@@ -260,7 +258,7 @@ void Student::editStudent(int colNumber, string colValue) {
 
 		if (res == "q") {
 			res = "";
-			return;
+			return false;
 		}
 
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -296,7 +294,7 @@ void Student::editStudent(int colNumber, string colValue) {
 
 		if (res == "q") {
 			res = "";
-			return;
+			return false;
 		}
 	}
 
@@ -320,7 +318,7 @@ void Student::editStudent(int colNumber, string colValue) {
 
 		if (res == "q") {
 			res = "";
-			return;
+			return false;
 		}
 	}
 
@@ -340,7 +338,7 @@ void Student::editStudent(int colNumber, string colValue) {
 
 		if (res == "q") {
 			res = "";
-			return;
+			return false;
 		}
 	}
 
@@ -366,9 +364,9 @@ void Student::editStudent(int colNumber, string colValue) {
 
 		if (res == "q") {
 			res = "";
-			return;
+			return false;
 		}
 	}
 
-	updateTxtFile(STUDENT_DETAILS, 0, trim(colValue), { {id, name, grade, dob, address, email, contact, guardianName, guardianContact, joinedDate} });
+	return updateTxtFile(STUDENT_DETAILS, 0, trim(colValue), { {id, name, grade, dob, address, email, contact, guardianName, guardianContact, joinedDate} });
 }

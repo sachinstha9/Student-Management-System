@@ -58,7 +58,7 @@ string getTodayDate() {
     return oss.str();
 }
 
-void checkCommandValidity(string command, vector<vector<string>> defCommands) {
+bool checkCommandValidity(string command, vector<vector<string>> defCommands) {
     int i = 0;
     for (i = 0; i < defCommands.size(); i++) {
         if (defCommands[i][0] == command || command == "") {
@@ -67,8 +67,10 @@ void checkCommandValidity(string command, vector<vector<string>> defCommands) {
     }
 
     if (i >= defCommands.size()) {
-        cout << "Command invalid. Type 'help' to see valid commands." << endl;
+        return false;
     }
+
+    return true;
 }
 
 string trim(const string& s) {
@@ -173,7 +175,7 @@ vector<vector<string>> readTxtFile(
     return data;
 }
 
-void writeTxtFile(const string& filename, const vector<vector<string>>& data, bool append) {
+bool writeTxtFile(const string& filename, const vector<vector<string>>& data, bool append) {
     ofstream outputFile;
 
     if (append) {
@@ -195,13 +197,13 @@ void writeTxtFile(const string& filename, const vector<vector<string>>& data, bo
         }
         outputFile.close();
 
+        return true;
     }
-    else {
-        cerr << "Error: Unable to access data." << endl;
-    }
+    else 
+        return false;
 }
 
-void updateTxtFile(
+bool updateTxtFile(
     const string& filename,
     size_t matchColumnIndex,
     const string& matchValue,
@@ -227,10 +229,10 @@ void updateTxtFile(
     }
 
     if (found) {
-        writeTxtFile(filename, data, false);
+        return writeTxtFile(filename, data, false);
     }
     else {
-        cout << "No details found." << endl;
+        return false;
     }
 }
 
