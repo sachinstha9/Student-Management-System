@@ -383,9 +383,12 @@ bool Student::enrollStudent(string studentId) {
 	cout << "Enter courses (Put space in between): ";
 	getline(cin, courses);
 	courses = trim(courses);
+	vector<string> coursesVec = splitBySpace(courses);
 
 	bool checkCourseValidity = true;
-	string marks;
+	string marks = "";
+	string newCourses = "";
+	string newMarks = "";
 
 	for (auto c : splitBySpace(courses)) {
 		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
@@ -399,13 +402,24 @@ bool Student::enrollStudent(string studentId) {
 	vector<vector<string>> studentCourseDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
 
 	if (studentCourseDetails.size() == 1) {
-		courses = studentCourseDetails[0][1] + " " + courses;
-		marks = studentCourseDetails[0][2];
-		for (auto c : splitBySpace(courses)) {
-			marks += " 0";
+		vector<string> oldCourses = splitBySpace(studentCourseDetails[0][1]);
+
+		for (const auto& course : coursesVec) {
+			if (find(oldCourses.begin(), oldCourses.end(), course) == oldCourses.end()) {
+				newCourses += course + " ";
+				newMarks += "0 ";
+			}
+			else
+				cout << "Course " << course << " already enrolled.\n";
 		}
 
-		return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, courses, marks });
+		newCourses = trim(newCourses);
+		newMarks = trim(newMarks);
+
+		newCourses = studentCourseDetails[0][1] + " " + newCourses;
+		newMarks = studentCourseDetails[0][2] + " " + newMarks;
+
+		return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, newCourses, newMarks });
 	}
 
 	for (auto c : splitBySpace(courses)) {
@@ -451,7 +465,13 @@ bool Student::disenrollStudent(string studentId) {
 	string newEnrolledCourses = "";
 	string newEnrolledCoursesMarks = "";
 
-	std::unordered_set<string> toRemoveSet(coursesVec.begin(), coursesVec.end());
+	for (const auto& course : coursesVec) {
+		if (find(enrolledCourses.begin(), enrolledCourses.end(), course) == enrolledCourses.end()) {
+			cout << "Course " << course << " not found in enrolled courses." << endl;
+		}
+	}
+
+	unordered_set<string> toRemoveSet(coursesVec.begin(), coursesVec.end());
 
 	for (size_t i = 0; i < enrolledCourses.size(); ++i) {
 		if (toRemoveSet.find(enrolledCourses[i]) == toRemoveSet.end()) {
@@ -462,6 +482,9 @@ bool Student::disenrollStudent(string studentId) {
 
 	newEnrolledCourses = trim(newEnrolledCourses);
 	newEnrolledCoursesMarks = trim(newEnrolledCoursesMarks);
+
+	if (courses == newEnrolledCourses)
+		return false;
 
 	if (newEnrolledCourses.empty() && newEnrolledCoursesMarks.empty())
 		return deleteRowTxtFile(STUDENT_ENROLLMENT, 0, studentId);

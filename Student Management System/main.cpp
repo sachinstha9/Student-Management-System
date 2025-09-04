@@ -129,7 +129,10 @@ int main()
                 getline(cin, value);
                 value = trim(value);
 
-                st.disenrollStudent(value);
+                if (st.disenrollStudent(value))
+                    cout << "Course disenroll successful." << endl;
+                else
+                    cout << "Course disenroll unsucessful." << endl;
             }
         }
         else if (comVector[0] == "exit") {
