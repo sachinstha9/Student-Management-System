@@ -152,3 +152,4 @@ bool Course::editCourse(int colNumber, std::string colValue) {
 bool Course::deleteCourse(std::string courseCode) {
 	return deleteRowTxtFile(COURSE_DETAILS, 0, courseCode);
 }
+

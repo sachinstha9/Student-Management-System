@@ -368,3 +368,39 @@ bool Student::editStudent(int colNumber, string colValue) {
 
 	return updateTxtFile(STUDENT_DETAILS, 0, trim(colValue), { {id, name, grade, dob, address, email, contact, guardianName, guardianContact, joinedDate} });
 }
+
+bool Student::deleteStudent(std::string colValue) {
+	return deleteRowTxtFile(STUDENT_DETAILS, 0, colValue);
+}
+
+bool Student::enrollStudent(string studentId) {
+	if (countRowsInFile(STUDENT_DETAILS, 0, studentId) != 1) {
+		cout << "Sorry, student with provided id doesn't exists." << endl;
+		return false;
+	}
+
+	cout << "Enter courses (Put space in between): ";
+	getline(cin, courses);
+	courses = trim(courses);
+
+	bool checkCourseValidity = true;
+
+	for (auto c : splitBySpace(courses)) {
+		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
+			cout << c << " doesn't exists." << endl;
+			checkCourseValidity = false;
+		}
+	}
+
+	if (!checkCourseValidity) return false;
+
+	vector<vector<string>> studentCourseDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
+
+	if (studentCourseDetails.size() == 1) {
+		courses = studentCourseDetails[0][1] + " " + courses;
+
+		return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, courses });
+	}
+
+	return writeTxtFile(STUDENT_ENROLLMENT, { {studentId, courses} });
+}

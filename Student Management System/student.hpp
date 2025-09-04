@@ -14,8 +14,11 @@ private:
     std::string guardianContact;
     std::string joinedDate;
     std::string res;
+    std::string courses;
 
     std::string STUDENT_DETAILS = "student.txt";
+    std::string STUDENT_ENROLLMENT = "student_enrollment.txt";
+    std::string COURSE_DETAILS = "courses.txt";
 
     //Student(std::string temp = "") {
     //    id = temp;
@@ -34,6 +37,8 @@ public:
     bool addStudent();
     void showStudent(int colNumber = -1, std::string colValue = "");
     bool editStudent(int colNumber, std::string colValue);
+    bool deleteStudent(std::string colValue);
+    bool enrollStudent(std::string studentId);
 };
 
 #endif

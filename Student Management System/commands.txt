@@ -4,7 +4,9 @@ help|To get valid commands
 add student|
 edit student|
 show student|
+delete student|
 add course|
 show course|
 edit course|
 delete course|
+enroll student|

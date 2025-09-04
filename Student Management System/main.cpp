@@ -89,9 +89,18 @@ int main()
             }
         }
         else if (comVector[0] == "delete") {
-            if (comVector[1] == "student")
-                return 0;
-            else if (comVector[1] == "course") {
+            if (comVector[1] == "student") {
+                cout << "Enter student's ID: ";
+                getline(cin, value);
+                value = trim(value);
+
+                if (st.deleteStudent(value))
+                    cout << "Student " << value << " delete successful." << endl;
+                else
+                    cout << "Student " << value << " delete unsuccessful." << endl;
+
+                value.clear();
+            } else if (comVector[1] == "course") {
                 cout << "Enter course code: ";
                 getline(cin, value);
                 value = trim(value);
@@ -103,6 +112,18 @@ int main()
 
                 value.clear();
             }
+        } 
+        else if (comVector[0] == "enroll") {
+            if (comVector[1] == "student") {
+                cout << "Enter student's ID: ";
+                getline(cin, value);
+                value = trim(value);
+
+                if (st.enrollStudent(value)) {
+                    return 0;
+                }
+            }
+
         }
         else if (comVector[0] == "exit") {
             cout << "Good bye." << endl;
@@ -110,3 +131,4 @@ int main()
         }
     }
 }
+

@@ -1,0 +1,2 @@
+student id|courses
+202509020|ENG03 MAT01 SCI01 SOC01
