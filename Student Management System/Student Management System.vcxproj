@@ -128,15 +128,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="course.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="student.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.hpp" />
+    <ClInclude Include="course.hpp" />
     <ClInclude Include="student.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt" />
+    <Text Include="courses.txt" />
     <Text Include="student.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
