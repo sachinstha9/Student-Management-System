@@ -4,3 +4,7 @@ help|To get valid commands
 add student|
 edit student|
 show student|
+add course|
+show course|
+edit course|
+delete course|

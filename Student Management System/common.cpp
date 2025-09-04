@@ -90,11 +90,9 @@ string trim(const string& s) {
 }
 
 void printTable(const vector<vector<string>>& table, int sortByColumn, bool ascending) {
-    // display vector<vector<string>> format data in table format
     if (table.empty()) return;
 
     size_t numCols = 0;
-    // gets number of columns
     for (const auto& row : table)
         numCols = max(numCols, row.size());
 
@@ -109,7 +107,6 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
     }
 
     vector<size_t> colWidths(numCols, 0);
-    // gets width of each columns
     for (const auto& row : sortedTable)
         for (size_t i = 0; i < row.size(); ++i)
             colWidths[i] = max(colWidths[i], row[i].length());
@@ -119,7 +116,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
         for (auto width : colWidths)
             cout << string(width + 2, '-') << "+";
         cout << '\n';
-        }; // prints border
+        }; 
 
     auto printRow = [&](const vector<string>& row) {
         cout << "|";
@@ -128,7 +125,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
             cout << " " << left << setw(colWidths[i]) << cell << " |";
         }
         cout << '\n';
-        }; // prints row
+        }; 
 
     printBorder();
     bool isHeader = true;
@@ -230,6 +227,34 @@ bool updateTxtFile(
 
     if (found) {
         return writeTxtFile(filename, data, false);
+    }
+    else {
+        return false;
+    }
+}
+
+bool deleteRowTxtFile(
+    const string& filename,
+    size_t matchColumnIndex,
+    const string& matchValue
+) {
+    auto data = readTxtFile(filename);
+
+    bool found = false;
+
+    vector<vector<string>> updatedData;
+
+    for (const auto& row : data) {
+        if (row.size() > matchColumnIndex && row[matchColumnIndex] == matchValue) {
+            found = true; 
+            continue;     
+        }
+
+        updatedData.push_back(row);
+    }
+
+    if (found) {
+        return writeTxtFile(filename, updatedData, false);
     }
     else {
         return false;

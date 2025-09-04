@@ -225,9 +225,7 @@ bool Student::addStudent() {
 }
 
 void Student::showStudent(int colNumber, string colValue) {
-	vector<vector<string>> studentDetails = readTxtFile(STUDENT_DETAILS, colNumber, colValue);
-
-	printTable(studentDetails);
+	printTable(readTxtFile(STUDENT_DETAILS, colNumber, colValue));
 }
 
 bool Student::editStudent(int colNumber, string colValue) {
