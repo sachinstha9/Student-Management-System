@@ -14,24 +14,11 @@ private:
     std::string guardianContact;
     std::string joinedDate;
     std::string res;
-    std::string courses;
 
     std::string STUDENT_DETAILS = "student.txt";
-    std::string STUDENT_MARKS = "student_marks.txt";
+    std::string STUDENT_MARKS = "grade.txt";
     std::string COURSE_DETAILS = "courses.txt";
 
-    //Student(std::string temp = "") {
-    //    id = temp;
-    //    name = temp;
-    //    grade = temp;
-    //    dob = temp;
-    //    address = temp;
-    //    email = temp;
-    //    contact = temp;
-    //    guardianName = temp;
-    //    guardianContact = temp;
-    //    joinedDate = temp;
-    //}
 public:
     std::vector<std::string> askDetails();
     bool addStudent();
