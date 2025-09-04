@@ -383,23 +383,22 @@ bool Student::enrollStudent(string studentId) {
 	cout << "Enter courses (Put space in between): ";
 	getline(cin, courses);
 	courses = trim(courses);
-	vector<string> coursesVec = splitBySpace(courses);
 
+	vector<string> coursesVec = splitBySpace(courses);
 	bool checkCourseValidity = true;
-	string marks = "";
 	string newCourses = "";
 	string newMarks = "";
+	vector<vector<string>> studentCourseDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
 
 	for (auto c : splitBySpace(courses)) {
 		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
-			cout << c << " doesn't exists." << endl;
+			cout << "Course " << c << " doesn't exists." << endl;
 			checkCourseValidity = false;
 		}
 	}
 
 	if (!checkCourseValidity) return false;
 
-	vector<vector<string>> studentCourseDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
 
 	if (studentCourseDetails.size() == 1) {
 		vector<string> oldCourses = splitBySpace(studentCourseDetails[0][1]);
@@ -423,10 +422,10 @@ bool Student::enrollStudent(string studentId) {
 	}
 
 	for (auto c : splitBySpace(courses)) {
-		marks += " 0";
+		newMarks += " 0";
 	}
 
-	return writeTxtFile(STUDENT_ENROLLMENT, { {studentId, courses, marks}});
+	return writeTxtFile(STUDENT_ENROLLMENT, { {studentId, courses, newMarks}});
 }
 
 bool Student::disenrollStudent(string studentId) {
