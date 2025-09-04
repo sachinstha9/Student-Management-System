@@ -131,17 +131,20 @@
     <ClCompile Include="course.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="student.cpp" />
+    <ClCompile Include="teacher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.hpp" />
     <ClInclude Include="course.hpp" />
     <ClInclude Include="student.hpp" />
+    <ClInclude Include="teacher.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="commands.txt" />
     <Text Include="courses.txt" />
     <Text Include="student.txt" />
-    <Text Include="student_marks.txt" />
+    <Text Include="grade.txt" />
+    <Text Include="teacher.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

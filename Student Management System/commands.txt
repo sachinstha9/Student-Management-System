@@ -11,3 +11,5 @@ edit course|
 delete course|
 enroll student|
 disenroll student|
+add teacher|
+add mark|

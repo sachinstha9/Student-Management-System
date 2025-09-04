@@ -6,6 +6,7 @@
 #include "common.hpp"
 #include "student.hpp"
 #include "course.hpp"
+#include "teacher.hpp";
 
 using namespace std;
 
@@ -20,6 +21,7 @@ int main()
 
     Student st;
     Course c;
+    Teacher t;
 
     vector<vector<string>> defCommands = readTxtFile(COMMANDS_FILE);
 
@@ -55,6 +57,24 @@ int main()
                     cout << "New course add successful." << endl;
                 else
                     cout << "New course add unsuccessful." << endl;
+            }
+            else if (comVector[1] == "teacher") {
+                if(t.addTeacher())
+                    cout << "New teacher register successful." << endl;
+                else
+                    cout << "Register unsuccessful." << endl;
+            }
+            else if (comVector[1] == "mark") {
+                cout << "Enter teacher's ID: ";
+                getline(cin, value);
+                value = trim(value);
+
+                if (t.inputMarks(value))
+                    cout << "Marks changed successfully." << endl;
+                else
+                    cout << "Marks change unsuccessful." << endl;
+
+                value.clear();
             }
         }
         else if (comVector[0] == "show") {
