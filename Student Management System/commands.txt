@@ -10,3 +10,4 @@ show course|
 edit course|
 delete course|
 enroll student|
+disenroll student|

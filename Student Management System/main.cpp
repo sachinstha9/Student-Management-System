@@ -119,11 +119,18 @@ int main()
                 getline(cin, value);
                 value = trim(value);
 
-                if (st.enrollStudent(value)) {
-                    return 0;
-                }
+                st.enrollStudent(value);
             }
 
+        }
+        else if (comVector[0] == "disenroll") {
+            if (comVector[1] == "student") {
+                cout << "Enter student's ID: ";
+                getline(cin, value);
+                value = trim(value);
+
+                st.disenrollStudent(value);
+            }
         }
         else if (comVector[0] == "exit") {
             cout << "Good bye." << endl;

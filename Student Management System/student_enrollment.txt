@@ -1,2 +1,3 @@
-student id|courses
-202509020|ENG03 MAT01 SCI01 SOC01
+student id|courses|marks
+202509020|ENG03 SCI01|0 2
+202509022|MUS01|2

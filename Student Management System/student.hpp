@@ -39,6 +39,7 @@ public:
     bool editStudent(int colNumber, std::string colValue);
     bool deleteStudent(std::string colValue);
     bool enrollStudent(std::string studentId);
+    bool disenrollStudent(std::string studentId);
 };
 
 #endif

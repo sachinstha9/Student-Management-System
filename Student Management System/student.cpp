@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <unordered_set>
 
 #include "student.hpp"
 #include "common.hpp"
@@ -384,6 +385,7 @@ bool Student::enrollStudent(string studentId) {
 	courses = trim(courses);
 
 	bool checkCourseValidity = true;
+	string marks;
 
 	for (auto c : splitBySpace(courses)) {
 		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
@@ -398,9 +400,71 @@ bool Student::enrollStudent(string studentId) {
 
 	if (studentCourseDetails.size() == 1) {
 		courses = studentCourseDetails[0][1] + " " + courses;
+		marks = studentCourseDetails[0][2];
+		for (auto c : splitBySpace(courses)) {
+			marks += " 0";
+		}
 
-		return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, courses });
+		return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, courses, marks });
 	}
 
-	return writeTxtFile(STUDENT_ENROLLMENT, { {studentId, courses} });
+	for (auto c : splitBySpace(courses)) {
+		marks += " 0";
+	}
+
+	return writeTxtFile(STUDENT_ENROLLMENT, { {studentId, courses, marks}});
+}
+
+bool Student::disenrollStudent(string studentId) {
+	if (countRowsInFile(STUDENT_DETAILS, 0, studentId) != 1) {
+		cout << "Sorry, student with provided id doesn't exists." << endl;
+		return false;
+	}
+
+	if (countRowsInFile(STUDENT_ENROLLMENT, 0, studentId) != 1) {
+		cout << "Sorry, student with provided id is not enrolled in any courses." << endl;
+		return false;
+	}
+
+	cout << "Enter courses (Put space in between): ";
+	getline(cin, courses);
+	courses = trim(courses);
+
+	vector<string> coursesVec = splitBySpace(courses);
+
+	bool checkCourseValidity = true;
+	string marks;
+
+	for (auto c : coursesVec) {
+		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
+			cout << c << " doesn't exists." << endl;
+			checkCourseValidity = false;
+		}
+	}
+
+	if (!checkCourseValidity) return false;
+
+	vector<vector<string>> enrollStudentDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
+	vector<string> enrolledCourses = splitBySpace(enrollStudentDetails[0][1]);
+	vector<string> enrolledCoursesMarks = splitBySpace(enrollStudentDetails[0][2]);
+
+	string newEnrolledCourses = "";
+	string newEnrolledCoursesMarks = "";
+
+	std::unordered_set<string> toRemoveSet(coursesVec.begin(), coursesVec.end());
+
+	for (size_t i = 0; i < enrolledCourses.size(); ++i) {
+		if (toRemoveSet.find(enrolledCourses[i]) == toRemoveSet.end()) {
+			newEnrolledCourses += enrolledCourses[i] + " ";
+			newEnrolledCoursesMarks += enrolledCoursesMarks[i] + " ";
+		}
+	}
+
+	newEnrolledCourses = trim(newEnrolledCourses);
+	newEnrolledCoursesMarks = trim(newEnrolledCoursesMarks);
+
+	if (newEnrolledCourses.empty() && newEnrolledCoursesMarks.empty())
+		return deleteRowTxtFile(STUDENT_ENROLLMENT, 0, studentId);
+
+	return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, newEnrolledCourses, newEnrolledCoursesMarks });
 }
