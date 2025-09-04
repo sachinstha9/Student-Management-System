@@ -48,6 +48,7 @@ int main()
                     cout << "New student register successful." << endl;
                 else
                     cout << "Register unsuccessful." << endl;
+
             }
             else if (comVector[1] == "course") {
                 if (c.addCourse())
@@ -115,24 +116,27 @@ int main()
         } 
         else if (comVector[0] == "enroll") {
             if (comVector[1] == "student") {
-                cout << "Enter student's ID: ";
+                cout << "Enter student code: ";
                 getline(cin, value);
                 value = trim(value);
 
-                st.enrollStudent(value);
+                if (st.enrollStudent(value))
+                    cout << "Enroll in course successful." << endl;
+                else
+                    cout << "Enroll in course unsuccessful." << endl;
             }
 
         }
         else if (comVector[0] == "disenroll") {
             if (comVector[1] == "student") {
-                cout << "Enter student's ID: ";
+                cout << "Enter student code: ";
                 getline(cin, value);
                 value = trim(value);
 
                 if (st.disenrollStudent(value))
-                    cout << "Course disenroll successful." << endl;
+                    cout << "Disenroll in course successful." << endl;
                 else
-                    cout << "Course disenroll unsucessful." << endl;
+                    cout << "Disenroll in course unsuccessful." << endl;
             }
         }
         else if (comVector[0] == "exit") {

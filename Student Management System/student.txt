@@ -1,3 +1,9 @@
 Id|Name|Grade|DOB|Address|Email|Contact|Guardian's Name|Guardian's Contact|Joined Date
 202509020|sachin|4|2023-02-01|nepal|sach@gmail.com|020434343|sachn|0203454272|2025-09-02
 202509022|ascas|4|2022-02-12|india|sac@gmail.com||sacsa|0203434534|2025-09-02
+202509021|ascas|4|2022-02-12|india|sac@gmail.com||sacsa|0203434534|2025-09-02
+202509024|ascas|4|2022-02-12|india|sac@gmail.com||sacsa|0203434534|2025-09-02
+202509023|ascas|4|2022-02-12|india|sac@gmail.com||sacsa|0203434534|2025-09-02
+202509041|Ashok|5|2006-02-01|auckland|ashok@gmail.com||Ashok basne|0203453343|2025-09-04
+202509046|vwevew|4|2006-01-01|sdvw|vwe@gmail.com||wevew|0203242332|2025-09-04
+202509041|asvas|1|2006-02-01|vwe|wevw@gmail.com||wefw|020235324|2025-09-04

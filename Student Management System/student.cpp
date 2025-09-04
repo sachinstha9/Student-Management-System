@@ -222,7 +222,13 @@ vector<string> Student::askDetails() {
 }
 
 bool Student::addStudent() {
-	return writeTxtFile(STUDENT_DETAILS, { askDetails() });
+	vector<string> details = askDetails();
+	vector<string> newStudent = { details[0] };
+	for (int i = 1; i < readTxtFile("student_grade.txt")[0].size(); i++) {
+		newStudent.push_back("- - -");
+	}
+	
+	return writeTxtFile(STUDENT_DETAILS, { details }) && writeTxtFile("student_grade.txt", { newStudent });
 }
 
 void Student::showStudent(int colNumber, string colValue) {
@@ -374,58 +380,57 @@ bool Student::deleteStudent(std::string colValue) {
 	return deleteRowTxtFile(STUDENT_DETAILS, 0, colValue);
 }
 
+void Student::insertMarks(string studentId, string courseCode, string mark, int markType) {
+	vector<string> targetRow = readTxtFile(STUDENT_MARKS, 0, studentId)[0];
+	vector<string> topRow = readTxtFile(STUDENT_MARKS, 0, "index")[0];
+
+	for (int i = 1; i < topRow.size(); i++) {
+		if (topRow[i] == courseCode) {
+			vector<string> markVec = splitBySpace(targetRow[i]);
+			string finalMark;
+
+			for (int j = 0; j < 3; j++) {
+				finalMark += ((j == markType || markType == 3) ? mark : markVec[j]) + " ";
+			}
+
+			targetRow[i] = trim(finalMark);
+			break;
+		}
+	}
+
+	updateTxtFile(STUDENT_MARKS, 0, studentId, targetRow);
+}
+
 bool Student::enrollStudent(string studentId) {
 	if (countRowsInFile(STUDENT_DETAILS, 0, studentId) != 1) {
 		cout << "Sorry, student with provided id doesn't exists." << endl;
 		return false;
 	}
 
+	string courses;
 	cout << "Enter courses (Put space in between): ";
 	getline(cin, courses);
 	courses = trim(courses);
-
 	vector<string> coursesVec = splitBySpace(courses);
-	bool checkCourseValidity = true;
-	string newCourses = "";
-	string newMarks = "";
-	vector<vector<string>> studentCourseDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
+	bool valid = true;
 
-	for (auto c : splitBySpace(courses)) {
+	for (const auto& c : coursesVec) {
 		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
-			cout << "Course " << c << " doesn't exists." << endl;
-			checkCourseValidity = false;
+			cout << c << " doesn't exists." << endl;
+			valid = false;
 		}
 	}
 
-	if (!checkCourseValidity) return false;
+	if (!valid) return false;
 
-
-	if (studentCourseDetails.size() == 1) {
-		vector<string> oldCourses = splitBySpace(studentCourseDetails[0][1]);
-
-		for (const auto& course : coursesVec) {
-			if (find(oldCourses.begin(), oldCourses.end(), course) == oldCourses.end()) {
-				newCourses += course + " ";
-				newMarks += "0 ";
-			}
-			else
-				cout << "Course " << course << " already enrolled.\n";
+	if (countRowsInFile(STUDENT_MARKS, 0, studentId) == 1) {
+		for (const auto& c : coursesVec) {
+			insertMarks(studentId, c, "0", 3);
 		}
-
-		newCourses = trim(newCourses);
-		newMarks = trim(newMarks);
-
-		newCourses = studentCourseDetails[0][1] + " " + newCourses;
-		newMarks = studentCourseDetails[0][2] + " " + newMarks;
-
-		return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, newCourses, newMarks });
+		return true;
 	}
 
-	for (auto c : splitBySpace(courses)) {
-		newMarks += " 0";
-	}
-
-	return writeTxtFile(STUDENT_ENROLLMENT, { {studentId, courses, newMarks}});
+	return false;
 }
 
 bool Student::disenrollStudent(string studentId) {
@@ -434,59 +439,28 @@ bool Student::disenrollStudent(string studentId) {
 		return false;
 	}
 
-	if (countRowsInFile(STUDENT_ENROLLMENT, 0, studentId) != 1) {
-		cout << "Sorry, student with provided id is not enrolled in any courses." << endl;
-		return false;
-	}
-
+	string courses;
 	cout << "Enter courses (Put space in between): ";
 	getline(cin, courses);
 	courses = trim(courses);
-
 	vector<string> coursesVec = splitBySpace(courses);
+	bool valid = true;
 
-	bool checkCourseValidity = true;
-	string marks;
-
-	for (auto c : coursesVec) {
+	for (const auto& c : coursesVec) {
 		if (countRowsInFile(COURSE_DETAILS, 0, c) != 1) {
 			cout << c << " doesn't exists." << endl;
-			checkCourseValidity = false;
+			valid = false;
 		}
 	}
 
-	if (!checkCourseValidity) return false;
+	if (!valid) return false;
 
-	vector<vector<string>> enrollStudentDetails = readTxtFile(STUDENT_ENROLLMENT, 0, studentId);
-	vector<string> enrolledCourses = splitBySpace(enrollStudentDetails[0][1]);
-	vector<string> enrolledCoursesMarks = splitBySpace(enrollStudentDetails[0][2]);
-
-	string newEnrolledCourses = "";
-	string newEnrolledCoursesMarks = "";
-
-	for (const auto& course : coursesVec) {
-		if (find(enrolledCourses.begin(), enrolledCourses.end(), course) == enrolledCourses.end()) {
-			cout << "Course " << course << " not found in enrolled courses." << endl;
+	if (countRowsInFile(STUDENT_MARKS, 0, studentId) == 1) {
+		for (const auto& c : coursesVec) {
+			insertMarks(studentId, c, "-", 3);
 		}
+		return true;
 	}
 
-	unordered_set<string> toRemoveSet(coursesVec.begin(), coursesVec.end());
-
-	for (size_t i = 0; i < enrolledCourses.size(); ++i) {
-		if (toRemoveSet.find(enrolledCourses[i]) == toRemoveSet.end()) {
-			newEnrolledCourses += enrolledCourses[i] + " ";
-			newEnrolledCoursesMarks += enrolledCoursesMarks[i] + " ";
-		}
-	}
-
-	newEnrolledCourses = trim(newEnrolledCourses);
-	newEnrolledCoursesMarks = trim(newEnrolledCoursesMarks);
-
-	if (courses == newEnrolledCourses)
-		return false;
-
-	if (newEnrolledCourses.empty() && newEnrolledCoursesMarks.empty())
-		return deleteRowTxtFile(STUDENT_ENROLLMENT, 0, studentId);
-
-	return updateTxtFile(STUDENT_ENROLLMENT, 0, studentId, { studentId, newEnrolledCourses, newEnrolledCoursesMarks });
+	return false;
 }

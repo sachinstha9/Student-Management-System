@@ -17,7 +17,7 @@ private:
     std::string courses;
 
     std::string STUDENT_DETAILS = "student.txt";
-    std::string STUDENT_ENROLLMENT = "student_enrollment.txt";
+    std::string STUDENT_MARKS = "student_marks.txt";
     std::string COURSE_DETAILS = "courses.txt";
 
     //Student(std::string temp = "") {
@@ -38,6 +38,7 @@ public:
     void showStudent(int colNumber = -1, std::string colValue = "");
     bool editStudent(int colNumber, std::string colValue);
     bool deleteStudent(std::string colValue);
+    void insertMarks(std::string studentId, std::string courseCode, std::string mark, int markType);
     bool enrollStudent(std::string studentId);
     bool disenrollStudent(std::string studentId);
 };
