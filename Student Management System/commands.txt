@@ -1,13 +1,26 @@
-Command|Function
-exit|To exit program
-help|To get valid commands
-add student|
-edit student|
-show student|
-delete student|
-add course|
-show course|
-edit course|
-delete course|
-enroll student|
-disenroll student|
+Command|Function|access(0-anyone,1-admin,2-teacher,3-student)
+exit|To exit program|0
+help|To get valid commands|0
+add student||1 2
+delete student||1 2
+edit student||1 2 3
+add teacher||1
+delete teacher||1
+edit teacher||1 2
+add course||1 2
+delete course||1 2
+edit course||1 2
+add admin||1
+delete admin||1
+edit admin||1
+edit mark||1 2
+enroll course||1 2 3
+disenroll course||1 2 3
+assign teacher||1
+disassign teacher||1 2
+show enroll-course||1 2 3
+show report||1 2 3
+show teacher||0
+show course||0
+show student||0
+logout||0

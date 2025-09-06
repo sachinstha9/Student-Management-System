@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "student.hpp"
+#include "admin.hpp"
 #include "filemodification.hpp"
 #include "common.hpp"
 
@@ -24,7 +24,7 @@ static auto askRetry = []() -> bool {
     return tolower(res) == 'y';
     };
 
-bool Student::add() {
+bool Admin::add() {
     while (true) {
         if (!getInput("Name: ", name)) {
             if (!askRetry()) return false;
@@ -59,34 +59,29 @@ bool Student::add() {
         if (!askRetry()) return false;
     }
 
+    srand(static_cast<unsigned int>(time(0)));
     string todayDate = getTodayDate();;
     todayDate.erase(std::remove(todayDate.begin(), todayDate.end(), '-'), todayDate.end());
-    size_t totalNumOfS = readTxtFile(STUDENT_FILE).size();
+    size_t totalNumOfS = readTxtFile(ADMIN_FILE).size();
 
-    id = todayDate + to_string(totalNumOfS + 1);
+    id = "A" + to_string(rand() % 100 + 1) + to_string(totalNumOfS + 1) + todayDate;
 
-    vector<vector<string>> grade = readTxtFile(GRADE_FILE);
-    vector<string> newStudentGrade = { id };
-    for (int i = 0; i < grade[0].size() - 1; i++) {
-        newStudentGrade.push_back("- -");
-    }
-
-    return writeTxtFile(STUDENT_FILE, { {id, name, email, password} }) && writeTxtFile(GRADE_FILE, { newStudentGrade });
+    return writeTxtFile(ADMIN_FILE, { {id, name, email, password} });
 }
 
-bool Student::del() {
+bool Admin::del() {
     string temp;
 
-    cout << "Enter student id: ";
+    cout << "Enter admin id: ";
     getline(cin, temp);
 
     if (!temp.empty()) {
-        if (readTxtFile(STUDENT_FILE, 0, temp).empty()) {
-            cout << "Student " << temp << " doesn't exists." << endl;
+        if (readTxtFile(ADMIN_FILE, 0, temp).empty()) {
+            cout << "Admin " << temp << " doesn't exists." << endl;
             return false;
         }
         else {
-            return deleteRowTxtFile(STUDENT_FILE, 0, temp);
+            return deleteRowTxtFile(ADMIN_FILE, 0, temp);
         }
     }
     else {
@@ -95,15 +90,15 @@ bool Student::del() {
     }
 }
 
-bool Student::edit() {
+bool Admin::edit() {
     string temp;
 
-    cout << "Enter student id: ";
+    cout << "Enter admin id: ";
     getline(cin, temp);
 
     if (!temp.empty()) {
-        if (readTxtFile(STUDENT_FILE, 0, temp).empty()) {
-            cout << "Student " << temp << " doesn't exists." << endl;
+        if (readTxtFile(ADMIN_FILE, 0, temp).empty()) {
+            cout << "Admin " << temp << " doesn't exists." << endl;
             return false;
         }
         else {
@@ -115,7 +110,7 @@ bool Student::edit() {
             while (true) {
                 getInput("Email: ", email);
 
-                if (isValidEmail(email) || email.empty()) break;
+                if (isValidEmail(email)) break;
                 cout << "Email not valid.\n";
                 if (!askRetry()) return false;
             }
@@ -123,12 +118,12 @@ bool Student::edit() {
             while (true) {
                 getInput("Password (must be 6 characters long): ", password);
 
-                if (password.size() >= 6 || password.empty()) break;
+                if (password.size() >= 6) break;
                 cout << "Password not valid.\n";
                 if (!askRetry()) return false;
             }
 
-            return updateTxtFile(STUDENT_FILE, 0, temp, { temp, name, email, password });
+            return updateTxtFile(ADMIN_FILE, 0, temp, { temp, name, email, password });
         }
     }
     else {
@@ -137,17 +132,17 @@ bool Student::edit() {
     }
 }
 
-void Student::show() {
-    vector<vector<string>> studentDetails = readTxtFile(STUDENT_FILE);
+void Admin::show() {
+    vector<vector<string>> adminDetails = readTxtFile(ADMIN_FILE);
 
-    if (studentDetails.size() <= 1) {
-        cout << "No student to show." << endl;
+    if (adminDetails.size() <= 1) {
+        cout << "No admin to show." << endl;
         return;
     }
 
-    for (int i = 0; i < studentDetails.size(); i++) {
-        studentDetails[i] = { studentDetails[i][0], studentDetails[i][1], studentDetails[i][2] };
+    for (int i = 0; i < adminDetails.size(); i++) {
+        adminDetails[i] = { adminDetails[i][0], adminDetails[i][1], adminDetails[i][2] };
     }
 
-    printTable(studentDetails);
+    printTable(adminDetails);
 }

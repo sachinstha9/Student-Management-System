@@ -18,6 +18,31 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="admin.cpp" />
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="course.cpp" />
+    <ClCompile Include="filemodification.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="student.cpp" />
+    <ClCompile Include="teacher.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="admin.hpp" />
+    <ClInclude Include="common.hpp" />
+    <ClInclude Include="course.hpp" />
+    <ClInclude Include="filemodification.hpp" />
+    <ClInclude Include="student.hpp" />
+    <ClInclude Include="teacher.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ADMINDETAILS.txt" />
+    <Text Include="COMMANDS.txt" />
+    <Text Include="COURSEDETAILS.txt" />
+    <Text Include="GRADE.txt" />
+    <Text Include="STUDENTDETAILS.txt" />
+    <Text Include="TEACHERDETAILS.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -126,23 +151,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="common.cpp" />
-    <ClCompile Include="course.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="student.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="common.hpp" />
-    <ClInclude Include="course.hpp" />
-    <ClInclude Include="student.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="commands.txt" />
-    <Text Include="courses.txt" />
-    <Text Include="student.txt" />
-    <Text Include="student_marks.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

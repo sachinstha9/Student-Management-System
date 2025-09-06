@@ -1,0 +1,8 @@
+id|name|teacher
+MAT01|Mathematics|-
+SCI01|Science|-
+SOC01|Social Studies|-
+ART01|Visual Arts|-
+MUS01|Music|-
+PE01|Physical Education|-
+MAT02|Mathematics|-

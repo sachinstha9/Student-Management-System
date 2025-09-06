@@ -1,80 +1,31 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <algorithm>
-#include <ctime>
 #include <regex>
 
 #include "common.hpp"
 
 using namespace std;
 
-vector<string> splitBySpace(string str) {
+vector<string> split(string str, char delimiter) {
     if (str.empty())
         return { "" };
 
-    istringstream iss(str);
-    string word;
-    vector<string> words;
+    vector<string> tokens;
+    string token;
+    stringstream ss(str);
 
-    while (iss >> word) {
-        words.push_back(word);
+    while (getline(ss, token, delimiter)) {
+        tokens.push_back(token);
     }
 
-    return words;
-}
-
-bool isValidDateFormat(const string& dateStr) {
-    static const regex pattern(R"(^\d{4}-\d{2}-\d{2}$)");
-    return regex_match(dateStr, pattern);
-}
-
-bool isValidEmail(const string& email) {
-    if (email.empty())
-        return false;
-
-    const regex pattern(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
-    return regex_match(email, pattern);
-}
-
-bool isValidNZMobileNumber(const string& number) {
-    regex localFormat("^02[0-9]{7,8}$");
-    regex internationalFormat("^\\+642[0-9]{7,8}$");
-
-    return regex_match(number, localFormat) || regex_match(number, internationalFormat);
-}
-
-string getTodayDate() {
-    time_t t = time(nullptr);
-    tm tm_buf{};
-    localtime_s(&tm_buf, &t);
-
-    ostringstream oss;
-    oss << put_time(&tm_buf, "%Y-%m-%d");
-    return oss.str();
-}
-
-bool checkCommandValidity(string command, vector<vector<string>> defCommands) {
-    int i = 0;
-    for (i = 0; i < defCommands.size(); i++) {
-        if (defCommands[i][0] == command || command == "") {
-            break;
-        }
-    }
-
-    if (i >= defCommands.size()) {
-        return false;
-    }
-
-    return true;
+    return tokens;
 }
 
 string trim(const string& s) {
-    // trims whitespace of a string
     if (s.empty())
         return "";
 
@@ -87,6 +38,58 @@ string trim(const string& s) {
         }).base();
 
     return (start < end) ? string(start, end) : "";
+}
+
+bool isValidEmail(const string& email) {
+    if (email.empty())
+        return false;
+
+    const regex pattern(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
+    return regex_match(email, pattern);
+}
+
+string getTodayDate() {
+    time_t t = time(nullptr);
+    tm tm_buf{};
+    localtime_s(&tm_buf, &t);
+
+    ostringstream oss;
+    oss << put_time(&tm_buf, "%Y-%m-%d");
+    return oss.str();
+}
+
+bool checkCommandValidity(string command, vector<vector<string>> defCommands, int userType) {
+    int i = 0;
+    for (i = 0; i < defCommands.size(); i++) {
+        if (defCommands[i][0] == command || command == "") {
+            break;
+        }
+    }
+
+    if (i >= defCommands.size()) {
+        cout << "Command invalid. Type 'help' to see valid commands." << endl;
+        return false;
+    }
+
+    vector<string> validUsers = split(defCommands[i][2]);
+
+    if (find(validUsers.begin(), validUsers.end(), to_string(userType)) == validUsers.end() && validUsers[0] != "0") {
+        for (auto c : validUsers) {
+            cout << "You must be ";
+
+            if (c == "1")
+                cout << "Admin";
+            else if (c == "2")
+                cout << "Teacher";
+            else if (c == "3")
+                cout << "Student";
+
+            cout << " to excute this command." << endl;
+        }
+        return false;
+    }
+
+    return true;
 }
 
 void printTable(const vector<vector<string>>& table, int sortByColumn, bool ascending) {
@@ -116,7 +119,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
         for (auto width : colWidths)
             cout << string(width + 2, '-') << "+";
         cout << '\n';
-        }; 
+        };
 
     auto printRow = [&](const vector<string>& row) {
         cout << "|";
@@ -125,7 +128,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
             cout << " " << left << setw(colWidths[i]) << cell << " |";
         }
         cout << '\n';
-        }; 
+        };
 
     printBorder();
     bool isHeader = true;
@@ -137,170 +140,4 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
         }
     }
     printBorder();
-}
-
-vector<vector<string>> readTxtFile(
-    const string& filename,
-    int colNumber,
-    const string& colValue
-) {
-    vector<vector<string>> data;
-    ifstream inputFile(filename);
-
-    if (!inputFile.is_open()) {
-        cerr << "Error: Unable to find the file." << endl;
-        return data;
-    }
-
-    string line;
-    while (getline(inputFile, line)) {
-        vector<string> row;
-        stringstream ss(line);
-        string field;
-
-        while (getline(ss, field, '|')) {
-            row.push_back(field);
-        }
-
-        if (colNumber == -1 ||
-            (colNumber >= 0 && colNumber < row.size() && row[colNumber] == colValue)) {
-            data.push_back(row);
-        }
-    }
-
-    inputFile.close();
-    return data;
-}
-
-bool writeTxtFile(const string& filename, const vector<vector<string>>& data, bool append) {
-    ofstream outputFile;
-
-    if (append) {
-        outputFile.open(filename, ios::out | ios::app);
-    }
-    else {
-        outputFile.open(filename, ios::out | ios::trunc);
-    }
-
-    if (outputFile.is_open()) {
-        for (const auto& row : data) {
-            for (size_t i = 0; i < row.size(); ++i) {
-                outputFile << row[i];
-                if (i < row.size() - 1) {
-                    outputFile << "|";
-                }
-            }
-            outputFile << "\n";
-        }
-        outputFile.close();
-
-        return true;
-    }
-    else 
-        return false;
-}
-
-bool updateTxtFile(
-    const string& filename,
-    size_t matchColumnIndex,
-    const string& matchValue,
-    const vector<string>& newRow
-) {
-    auto data = readTxtFile(filename);
-    bool found = false;
-
-    for (auto& row : data) {
-        if (row.size() > matchColumnIndex && row[matchColumnIndex] == matchValue) {
-            if (row.size() < newRow.size()) {
-                row.resize(newRow.size());
-            }
-
-            for (size_t i = 0; i < newRow.size(); ++i) {
-                if (newRow[i] != "")
-                    row[i] = newRow[i];
-            }
-
-            found = true;
-            break;
-        }
-    }
-
-    if (found) {
-        return writeTxtFile(filename, data, false);
-    }
-    else {
-        return false;
-    }
-}
-
-bool deleteRowTxtFile(
-    const string& filename,
-    size_t matchColumnIndex,
-    const string& matchValue
-) {
-    auto data = readTxtFile(filename);
-
-    bool found = false;
-
-    vector<vector<string>> updatedData;
-
-    for (const auto& row : data) {
-        if (row.size() > matchColumnIndex && row[matchColumnIndex] == matchValue) {
-            found = true; 
-            continue;     
-        }
-
-        updatedData.push_back(row);
-    }
-
-    if (found) {
-        return writeTxtFile(filename, updatedData, false);
-    }
-    else {
-        return false;
-    }
-}
-
-
-int countRowsInFile(
-    const string& filename,
-    int colNumber,
-    const string& colValue,
-    char delimiter
-) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Failed to open file: " << filename << endl;
-        return -1;
-    }
-
-    string line;
-    int count = 0;
-
-    while (getline(file, line)) {
-        if (colNumber == -1) {
-            count++;
-        }
-        else {
-            stringstream ss(line);
-            string cell;
-            int currentCol = 0;
-            bool matched = false;
-
-            while (getline(ss, cell, delimiter)) {
-                if (currentCol == colNumber) {
-                    if (cell == colValue) {
-                        matched = true;
-                    }
-                    break;
-                }
-                currentCol++;
-            }
-
-            if (matched) count++;
-        }
-    }
-
-    file.close();
-    return count;
 }

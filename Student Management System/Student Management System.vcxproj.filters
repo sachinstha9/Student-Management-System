@@ -15,38 +15,65 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="admin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="course.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="filemodification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="student.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="course.cpp">
+    <ClCompile Include="teacher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.hpp">
+    <ClInclude Include="admin.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="student.hpp">
+    <ClInclude Include="common.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="course.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="filemodification.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="student.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="teacher.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="commands.txt">
+    <Text Include="ADMINDETAILS.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="student.txt">
+    <Text Include="TEACHERDETAILS.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="courses.txt">
+    <Text Include="COMMANDS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="COURSEDETAILS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="GRADE.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="STUDENTDETAILS.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

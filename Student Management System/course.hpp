@@ -3,19 +3,30 @@
 
 class Course {
 private:
-    std::string courseCode;
-    std::string courseName;
-    std::string courseDesc;
-    std::string courseTeacher;
-    std::string COURSE_DETAILS = "courses.txt";
-    std::string res;
+    std::string code;
+    std::string name;
+    std::string description;
+    std::string teachers;
+
+    std::string COURSE_FILE = "COURSEDETAILS.txt",
+        STUDENT_FILE = "STUDENTDETAILS.txt",
+        TEACHER_FILE = "TEACHERDETAILS.txt",
+        ADMIN_FILE = "ADMINDETAILS.txt",
+        GRADE_FILE = "GRADE.txt";
 
 public:
-    std::vector<std::string> askDetails();
-    bool addCourse();
-    void showCourse(int colNumber = -1, std::string colValue = "");
-    bool editCourse(int colNumber, std::string colValue);
-    bool deleteCourse(std::string colValue);
+    bool add();
+    bool del();
+    bool edit();
+    bool editMark(std::string id, std::string course, int markType, std::string mark);
+    std::vector<std::string> getMarks(const std::string& studentId, const std::string& courseName);
+    bool enroll(std::string studentId = "");
+    bool disenroll(std::string studentId = "");
+    bool assignTeacher();
+    bool disassignTeacher();
+    std::vector<std::string> getEnrolledCourses(std::string studentId = "");
+    void generateReport(std::string studentId = "");
+    void show();
 };
 
 #endif

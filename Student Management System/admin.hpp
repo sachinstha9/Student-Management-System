@@ -1,7 +1,7 @@
-#ifndef STUDENT_HPP
-#define STUDENT_HPP
+#ifndef ADMIN_HPP
+#define ADMIN_HPP
 
-class Student {
+class Admin {
 private:
     std::string id;
     std::string name;
