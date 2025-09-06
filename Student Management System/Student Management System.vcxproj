@@ -151,6 +151,29 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+<<<<<<< HEAD
+=======
+  <ItemGroup>
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="course.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="student.cpp" />
+    <ClCompile Include="teacher.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.hpp" />
+    <ClInclude Include="course.hpp" />
+    <ClInclude Include="student.hpp" />
+    <ClInclude Include="teacher.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="commands.txt" />
+    <Text Include="courses.txt" />
+    <Text Include="student.txt" />
+    <Text Include="grade.txt" />
+    <Text Include="teacher.txt" />
+  </ItemGroup>
+>>>>>>> d3e046512ab807f351ee6c8daeceb103ccf7fd40
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

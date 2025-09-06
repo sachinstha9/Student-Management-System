@@ -1,0 +1,10 @@
+course code|course name|description|teacherId
+MAT01|Mathematics|Number operations, geometry, and problem-solving.|202509052
+SCI01|Science|Introduction to biology, chemistry, and physics.|202509053
+SOC01|Social Studies|Local and national history and geography.|202509054
+ART01|Visual Arts|Painting, drawing, and sculpture.|202509055
+MUS01|Music|Singing, playing instruments, and music theory.|202509056
+PE01|Physical Education|Team sports, gymnastics, and health.|202509057
+TEC01|Digital Technologies|Basic computer skills and coding.|202509058
+TE10|Technical Education|This is the technical education|202509059
+ENG03|English 102||2025090510
