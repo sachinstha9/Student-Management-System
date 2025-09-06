@@ -8,12 +8,8 @@
 #include "filemodification.hpp"
 #include "student.hpp"
 #include "course.hpp"
-<<<<<<< HEAD
 #include "teacher.hpp"
 #include "admin.hpp"
-=======
-#include "teacher.hpp";
->>>>>>> d3e046512ab807f351ee6c8daeceb103ccf7fd40
 
 using namespace std;
 
@@ -89,10 +85,7 @@ int main()
     Student s;
     Course c;
     Teacher t;
-<<<<<<< HEAD
     Admin a;
-=======
->>>>>>> d3e046512ab807f351ee6c8daeceb103ccf7fd40
 
     string COURSE_FILE = "COURSEDETAILS.txt",
         STUDENT_FILE = "STUDENTDETAILS.txt",
@@ -109,8 +102,7 @@ int main()
     while (true) {
         if (u.id.empty()) {
             u = setUserType(STUDENT_FILE, TEACHER_FILE, ADMIN_FILE);
-            cout << endl;
-            continue;
+           continue;
         }
 
         cout << ">> ";
@@ -123,8 +115,12 @@ int main()
         if (comVector[0] == "help") {
             printTable(defCommands);
         }
+        else if (comVector[0] == "exit") {
+            cout << "Good day." << endl;
+            break;
+        }
         else if (comVector[0] == "logout") {
-            if (u.id.empty()) {
+            if (!u.id.empty()) {
                 cout << "Login first." << endl;
                 continue;
             }
@@ -132,10 +128,6 @@ int main()
             u.id = "";
             u.type = 0;
             cout << "Logout successful." << endl;
-        }
-        else if (comVector[0] == "exit") {
-            cout << "Good day." << endl;
-            break;
         }
         else if (comVector[0] == "add") {
             if (comVector[1] == "student" && (u.type == 1 || u.type == 2) && comVector.size() == 2) {
@@ -156,45 +148,9 @@ int main()
                 else
                     cout << "New course add unsuccessful." << endl;
             }
-<<<<<<< HEAD
             else if (comVector[1] == "admin" && u.type == 1) {
                 if (a.add())
                     cout << "New admin registered succesfully." << endl;
-=======
-            else if (comVector[1] == "teacher") {
-                if(t.addTeacher())
-                    cout << "New teacher register successful." << endl;
-                else
-                    cout << "Register unsuccessful." << endl;
-            }
-            else if (comVector[1] == "mark") {
-                cout << "Enter teacher's ID: ";
-                getline(cin, value);
-                value = trim(value);
-
-                if (t.inputMarks(value))
-                    cout << "Marks changed successfully." << endl;
-                else
-                    cout << "Marks change unsuccessful." << endl;
-
-                value.clear();
-            }
-        }
-        else if (comVector[0] == "show") {
-            if (comVector[1] == "student")
-                st.showStudent();
-            else if (comVector[1] == "course")
-                c.showCourse();
-        }
-        else if (comVector[0] == "edit") {
-            if (comVector[1] == "student") {
-                cout << "Enter student's ID: ";
-                getline(cin, value);
-                value = trim(value);
-
-                if (st.editStudent(0, value))
-                    cout << "Student " << value << " edit successful." << endl;
->>>>>>> d3e046512ab807f351ee6c8daeceb103ccf7fd40
                 else
                     cout << "New admin register unsuccessful." << endl;
             }

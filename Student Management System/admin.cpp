@@ -135,11 +135,6 @@ bool Admin::edit() {
 void Admin::show() {
     vector<vector<string>> adminDetails = readTxtFile(ADMIN_FILE);
 
-    if (adminDetails.size() <= 1) {
-        cout << "No admin to show." << endl;
-        return;
-    }
-
     for (int i = 0; i < adminDetails.size(); i++) {
         adminDetails[i] = { adminDetails[i][0], adminDetails[i][1], adminDetails[i][2] };
     }

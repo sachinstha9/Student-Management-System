@@ -140,11 +140,6 @@ bool Student::edit() {
 void Student::show() {
     vector<vector<string>> studentDetails = readTxtFile(STUDENT_FILE);
 
-    if (studentDetails.size() <= 1) {
-        cout << "No student to show." << endl;
-        return;
-    }
-
     for (int i = 0; i < studentDetails.size(); i++) {
         studentDetails[i] = { studentDetails[i][0], studentDetails[i][1], studentDetails[i][2] };
     }

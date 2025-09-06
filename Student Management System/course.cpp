@@ -494,12 +494,5 @@ void Course::generateReport(string studentId) {
 }
 
 void Course::show() {
-    vector<vector<string>> courseDetails = readTxtFile(COURSE_FILE);
-
-    if(courseDetails.size() <= 1) {
-        cout << "No courses to show." << endl;
-        return;
-    }
-
-    printTable(courseDetails);
+    printTable(readTxtFile(COURSE_FILE));
 }

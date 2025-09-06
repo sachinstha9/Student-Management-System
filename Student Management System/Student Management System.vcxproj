@@ -18,36 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="admin.cpp" />
-    <ClCompile Include="common.cpp" />
-    <ClCompile Include="course.cpp" />
-    <ClCompile Include="filemodification.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="student.cpp" />
-    <ClCompile Include="teacher.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="admin.hpp" />
-    <ClInclude Include="common.hpp" />
-    <ClInclude Include="course.hpp" />
-    <ClInclude Include="filemodification.hpp" />
-    <ClInclude Include="student.hpp" />
-    <ClInclude Include="teacher.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ADMINDETAILS.txt" />
-    <Text Include="COMMANDS.txt" />
-    <Text Include="COURSEDETAILS.txt" />
-    <Text Include="GRADE.txt" />
-    <Text Include="STUDENTDETAILS.txt" />
-    <Text Include="TEACHERDETAILS.txt" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7b4cb353-b4c0-418d-a0b8-de5857dec1fe}</ProjectGuid>
-    <RootNamespace>StudentManagementSystem</RootNamespace>
+    <ProjectGuid>{7B4CB353-B4C0-418D-A0B8-DE5857DEC1FE}</ProjectGuid>
+    <RootNamespace>sms</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -151,29 +126,31 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-<<<<<<< HEAD
-=======
   <ItemGroup>
+    <ClCompile Include="admin.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="course.cpp" />
+    <ClCompile Include="filemodification.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="student.cpp" />
     <ClCompile Include="teacher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="admin.hpp" />
     <ClInclude Include="common.hpp" />
     <ClInclude Include="course.hpp" />
+    <ClInclude Include="filemodification.hpp" />
     <ClInclude Include="student.hpp" />
     <ClInclude Include="teacher.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="commands.txt" />
-    <Text Include="courses.txt" />
-    <Text Include="student.txt" />
-    <Text Include="grade.txt" />
-    <Text Include="teacher.txt" />
+    <Text Include="ADMINDETAILS.txt" />
+    <Text Include="COMMANDS.txt" />
+    <Text Include="COURSEDETAILS.txt" />
+    <Text Include="GRADE.txt" />
+    <Text Include="STUDENTDETAILS.txt" />
+    <Text Include="TEACHERDETAILS.txt" />
   </ItemGroup>
->>>>>>> d3e046512ab807f351ee6c8daeceb103ccf7fd40
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

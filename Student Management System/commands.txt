@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Command|Function|access(0-anyone,1-admin,2-teacher,3-student)
 exit|To exit program|0
 help|To get valid commands|0
@@ -25,20 +24,3 @@ show teacher||0
 show course||0
 show student||0
 logout||0
-=======
-Command|Function
-exit|To exit program
-help|To get valid commands
-add student|
-edit student|
-show student|
-delete student|
-add course|
-show course|
-edit course|
-delete course|
-enroll student|
-disenroll student|
-add teacher|
-add mark|
->>>>>>> d3e046512ab807f351ee6c8daeceb103ccf7fd40
