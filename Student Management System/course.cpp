@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 #include "course.hpp"
 #include "filemodification.hpp"
@@ -9,6 +10,7 @@
 
 using namespace std;
 
+// simple input helper
 static auto getInput = [](const string& prompt, string& value) -> bool {
     cout << prompt;
     getline(cin, value);
@@ -16,6 +18,7 @@ static auto getInput = [](const string& prompt, string& value) -> bool {
     return !value.empty();
     };
 
+// retry prompt
 static auto askRetry = []() -> bool {
     char res;
     cout << "Do you want to try again? (y/n): ";
@@ -24,473 +27,299 @@ static auto askRetry = []() -> bool {
     return tolower(res) == 'y';
     };
 
+// join vector into string
+static auto joinVector = [](const vector<string>& vec, const string& delim = " ") -> string {
+    string result;
+    for (size_t i = 0; i < vec.size(); ++i) {
+        result += vec[i];
+        if (i < vec.size() - 1) result += delim;
+    }
+    return result;
+    };
+
+// grade calculation
 static string calculateGrade(double finalScore) {
     if (finalScore >= 90.0) return "A+";
-    else if (finalScore >= 85.0) return "A";
-    else if (finalScore >= 80.0) return "A-";
-    else if (finalScore >= 75.0) return "B+";
-    else if (finalScore >= 70.0) return "B";
-    else if (finalScore >= 65.0) return "B-";
-    else if (finalScore >= 60.0) return "C+";
-    else if (finalScore >= 55.0) return "C";
-    else if (finalScore >= 50.0) return "C-";
-    else return "F";
+    if (finalScore >= 85.0) return "A";
+    if (finalScore >= 80.0) return "A-";
+    if (finalScore >= 75.0) return "B+";
+    if (finalScore >= 70.0) return "B";
+    if (finalScore >= 65.0) return "B-";
+    if (finalScore >= 60.0) return "C+";
+    if (finalScore >= 55.0) return "C";
+    if (finalScore >= 50.0) return "C-";
+    return "F";
 }
 
+// -------------------
+// CRUD operations
+// -------------------
 bool Course::add() {
     while (true) {
-        if (!getInput("Course Code: ", code)) {
-            if (!askRetry()) return false;
-            continue;
-        }
-        if (readTxtFile(COURSE_FILE, 0, code).size() == 0) break;
-        cout << "Course code already exists (Must be unique).\n";
+        getInput("Course Code: ", code);
+        if (!code.empty() && readTxtFile(COURSE_FILE, 0, code).empty()) break;
+        cout << "Course code must be unique.\n";
         if (!askRetry()) return false;
     }
 
-    while (true) {
-        if (!getInput("Course Name: ", name)) {
-            if (!askRetry()) return false;
-            continue;
-        }
-
-        if (!name.empty()) break;
-        cout << "Field cannot be empty.\n";
-        if (!askRetry()) return false;
-    }
+    if (!getInput("Course Name: ", name)) return false;
 
     vector<vector<string>> grade = readTxtFile(GRADE_FILE);
     vector<string> newGradeCol = { code };
-    for (int i = 0; i < grade.size() - 1; i++) {
+    for (size_t i = 0; i < grade.size() - 1; ++i)
         newGradeCol.push_back("- -");
-    }
 
-    return writeTxtFile(COURSE_FILE, { {code, name, ""} }) && addColumnToTxtFile(GRADE_FILE, newGradeCol);
+    return writeTxtFile(COURSE_FILE, { {code, name, "-"} }) &&
+        addColumnToTxtFile(GRADE_FILE, newGradeCol);
 }
 
 bool Course::del() {
-    string temp;
-
     cout << "Enter course code: ";
+    string temp;
     getline(cin, temp);
+    temp = trim(temp);
 
-    if (!temp.empty()) {
-        if (readTxtFile(COURSE_FILE, 0, temp).empty()) {
-            cout << "Course " << temp << " doesn't exists." << endl;
-            return false;
-        }
-        else {
-            return deleteRowTxtFile(COURSE_FILE, 0, temp);
-        }
-    }
-    else {
-        cout << "Field cann't be empty." << endl;
+    if (temp.empty() || readTxtFile(COURSE_FILE, 0, temp).empty()) {
+        cout << "Invalid course code.\n";
         return false;
     }
+
+    return deleteRowTxtFile(COURSE_FILE, 0, temp);
 }
 
 bool Course::edit() {
+    cout << "Enter course code to edit: ";
     string temp;
-
-    cout << "Enter course code: ";
     getline(cin, temp);
+    temp = trim(temp);
 
-    if (!temp.empty()) {
-        if (readTxtFile(COURSE_FILE, 0, temp).empty()) {
-            cout << "Course " << temp << " doesn't exists." << endl;
-            return false;
-        }
-        else {
-            while (true) {
-                getInput("Course Code: ", code);
-
-                if (!readTxtFile(COURSE_FILE, 0, code).empty()) break;
-                cout << "Course code already exists (Must be unique).\n";
-                if (!askRetry()) return false;
-            }
-
-            while (true) {
-                getInput("Course Name: ", name);
-                break;
-            }
-
-            while (true) {
-                getInput("Course Description: ", description);
-                break;
-            }
-
-            return updateTxtFile(COURSE_FILE, 0, temp, { code, name, description });
-        }
-    }
-    else {
-        cout << "Field cann't be empty." << endl;
+    if (temp.empty() || readTxtFile(COURSE_FILE, 0, temp).empty()) {
+        cout << "Course not found.\n";
         return false;
     }
+
+    getInput("New Course Code: ", code);
+    getInput("New Course Name: ", name);
+    getInput("New Description: ", description);
+
+    return updateTxtFile(COURSE_FILE, 0, temp, { code, name, description, teachers });
 }
 
+// -------------------
+// Marks
+// -------------------
 bool Course::editMark(string id, string course, int markType, string mark) {
-    vector<vector<string>> targetRow = readTxtFile(GRADE_FILE, 0, id);
-    vector<vector<string>> topRow = readTxtFile(GRADE_FILE, 0, "index");
+    auto targetRow = readTxtFile(GRADE_FILE, 0, id);
+    auto topRow = readTxtFile(GRADE_FILE, 0, "index");
 
-    for (int i = 1; i < topRow[0].size(); i++) {
-        if (course == topRow[0][i]) {
+    for (size_t i = 1; i < topRow[0].size(); ++i) {
+        if (topRow[0][i] == course) {
             vector<string> markVec = split(targetRow[0][i]);
-            if (mark != "-")
-                if (stoi(mark) < 0 || stoi(mark) > 100) {
-                    cout << "Mark cannot be above 100 or below 0." << endl;
+            if (mark != "-") {
+                int m = stoi(mark);
+                if (m < 0 || m > 100) {
+                    cout << "Mark must be 0-100.\n";
                     return false;
                 }
-
-            if (markType == 1)
-                targetRow[0][i] = mark + " " + markVec[1];
-            else if (markType == 2)
-                targetRow[0][i] = markVec[0] + " " + mark;
+            }
+            targetRow[0][i] = (markType == 1 ? mark + " " + markVec[1] : markVec[0] + " " + mark);
         }
     }
-
     return updateTxtFile(GRADE_FILE, 0, id, targetRow[0]);
 }
 
-vector<string> Course::getMarks(const string& studentId, const string& course) {
-    vector<vector<string>> targetRow = readTxtFile(GRADE_FILE, 0, studentId);
-    vector<vector<string>> topRow = readTxtFile(GRADE_FILE, 0, "index");
+vector<string> Course::getMarks(const string& studentId, const string& courseName) {
+    auto targetRow = readTxtFile(GRADE_FILE, 0, studentId);
+    auto topRow = readTxtFile(GRADE_FILE, 0, "index");
 
-    if (targetRow.empty() || topRow.empty()) {
-        return { "Error: Grade data not found" };
-    }
+    if (targetRow.empty() || topRow.empty()) return { "Error: Grade data not found" };
 
-    for (int i = 1; i < topRow[0].size(); i++) {
-        if (topRow[0][i] == course) {
-            string gradeEntry = targetRow[0][i];
-
-            auto parts = split(gradeEntry);
-            if (parts.size() != 2) {
-                return { "Error: Invalid grade format" };
-            }
-
-            string internal = parts[0];
-            string final = parts[1];
-
-            return { internal, final };
-        }
-    }
+    for (size_t i = 1; i < topRow[0].size(); ++i)
+        if (topRow[0][i] == courseName) return split(targetRow[0][i]);
 
     return { "Error: Course not found in grade sheet" };
 }
 
+// -------------------
+// Enrollment
+// -------------------
 bool Course::enroll(string studentId) {
-    string tempCode, tempId;
-
     cout << "Enter course code: ";
+    string tempCode;
     getline(cin, tempCode);
     tempCode = trim(tempCode);
 
-    if (!tempCode.empty()) {
-        if (readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
-            cout << "Course " << tempCode << " doesn't exists." << endl;
-            return false;
-        }
-    }
-    else {
-        cout << "Field can't be empty." << endl;
+    if (tempCode.empty() || readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
+        cout << "Course not found.\n";
         return false;
     }
 
     if (studentId.empty()) {
         cout << "Enter student id: ";
-        getline(cin, tempId);
-        tempId = trim(tempId);
-
-        if (!tempId.empty()) {
-            if (readTxtFile(STUDENT_FILE, 0, tempId).empty()) {
-                cout << "Student " << tempId << " doesn't exists." << endl;
-                return false;
-            }
-        }
-        else {
-            cout << "Field can't be empty." << endl;
+        getline(cin, studentId);
+        studentId = trim(studentId);
+        if (studentId.empty() || readTxtFile(STUDENT_FILE, 0, studentId).empty()) {
+            cout << "Student not found.\n";
             return false;
         }
     }
-    else
-        tempId = studentId;
 
-    vector<string> marks = getMarks(tempId, tempCode);
+    auto marks = getMarks(studentId, tempCode);
+    if (marks[0] == "-" && marks[1] == "-")
+        return editMark(studentId, tempCode, 1, "0") && editMark(studentId, tempCode, 2, "0");
 
-    if (marks.size() == 2)
-        if (marks[0] == "-" && marks[1] == "-") {
-            return editMark(tempId, tempCode, 1, "0") &&
-                editMark(tempId, tempCode, 2, "0");
-        }
-        else {
-            cout << "Student " << tempId << " already enrolled in course " << tempCode << "." << endl;
-            return false;
-        }
-
-
+    cout << "Student already enrolled.\n";
     return false;
 }
 
 bool Course::disenroll(string studentId) {
-    string tempCode, tempId;
-
     cout << "Enter course code: ";
+    string tempCode;
     getline(cin, tempCode);
     tempCode = trim(tempCode);
 
-    if (!tempCode.empty()) {
-        if (readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
-            cout << "Course " << tempCode << " doesn't exists." << endl;
-            return false;
-        }
-    }
-    else {
-        cout << "Field can't be empty." << endl;
+    if (tempCode.empty() || readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
+        cout << "Course not found.\n";
         return false;
     }
 
     if (studentId.empty()) {
         cout << "Enter student id: ";
-        getline(cin, tempId);
-        tempId = trim(tempId);
-
-        if (!tempId.empty()) {
-            if (readTxtFile(STUDENT_FILE, 0, tempId).empty()) {
-                cout << "Student " << tempId << " doesn't exists." << endl;
-                return false;
-            }
-        }
-        else {
-            cout << "Field can't be empty." << endl;
+        getline(cin, studentId);
+        studentId = trim(studentId);
+        if (studentId.empty() || readTxtFile(STUDENT_FILE, 0, studentId).empty()) {
+            cout << "Student not found.\n";
             return false;
         }
     }
-    else
-        tempId = studentId;
 
-    vector<string> marks = getMarks(tempId, tempCode);
+    auto marks = getMarks(studentId, tempCode);
+    if (marks[0] != "-" || marks[1] != "-")
+        return editMark(studentId, tempCode, 1, "-") && editMark(studentId, tempCode, 2, "-");
 
-    if (marks.size() == 2)
-        if (marks[0] != "-" && marks[1] != "-") {
-            return editMark(tempId, tempCode, 1, "-") &&
-                editMark(tempId, tempCode, 2, "-");
-        }
-        else {
-            cout << "Student " << tempId << " not enrolled in the course " << tempCode << "." << endl;
-            return false;
-        }
-
-
+    cout << "Student not enrolled.\n";
     return false;
 }
 
+// -------------------
+// Teacher Assignment
+// -------------------
 bool Course::assignTeacher() {
-    string tempCode, tempId;
-
     cout << "Enter course code: ";
+    string tempCode;
     getline(cin, tempCode);
     tempCode = trim(tempCode);
 
-    if (!tempCode.empty()) {
-        if (readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
-            cout << "Course " << tempCode << " doesn't exists." << endl;
-            return false;
-        }
-    }
-    else {
-        cout << "Field can't be empty." << endl;
+    if (tempCode.empty() || readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
+        cout << "Course not found.\n";
         return false;
     }
 
     cout << "Enter teacher id: ";
+    string tempId;
     getline(cin, tempId);
     tempId = trim(tempId);
 
-    if (!tempId.empty()) {
-        if (readTxtFile(TEACHER_FILE, 0, tempId).empty()) {
-            cout << "Teacher " << tempId << " doesn't exists." << endl;
-            return false;
-        }
-    }
-    else {
-        cout << "Field can't be empty." << endl;
+    if (tempId.empty() || readTxtFile(TEACHER_FILE, 0, tempId).empty()) {
+        cout << "Teacher not found.\n";
         return false;
     }
 
     vector<string> courseDetails = readTxtFile(COURSE_FILE, 0, tempCode)[0];
-
-    if (courseDetails[2] == "-")
-        courseDetails[2] = tempId;
-    else {
-        vector<string> assignedTeacherVec = split(courseDetails[2]);
-        if (find(assignedTeacherVec.begin(), assignedTeacherVec.end(), tempId) != assignedTeacherVec.end()) {
-            cout << "Teacher " << tempId << " already assigned to course " << tempCode << "." << endl;
-            return false;
-        }
-        else
-            courseDetails[2] += " " + tempId;
+    vector<string> assigned = split(courseDetails[3]);
+    if (find(assigned.begin(), assigned.end(), tempId) != assigned.end()) {
+        cout << "Teacher already assigned.\n";
+        return false;
     }
 
-    return updateTxtFile(COURSE_FILE, 0, tempCode, { courseDetails[0], courseDetails[1], courseDetails[2] });
+    courseDetails[3] = (courseDetails[3] == "-" ? tempId : courseDetails[3] + " " + tempId);
+    return updateTxtFile(COURSE_FILE, 0, tempCode, courseDetails);
 }
 
 bool Course::disassignTeacher() {
-    string tempCode, tempId;
-
     cout << "Enter course code: ";
+    string tempCode;
     getline(cin, tempCode);
     tempCode = trim(tempCode);
 
-    if (!tempCode.empty()) {
-        if (readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
-            cout << "Course " << tempCode << " doesn't exists." << endl;
-            return false;
-        }
-    }
-    else {
-        cout << "Field can't be empty." << endl;
+    if (tempCode.empty() || readTxtFile(COURSE_FILE, 0, tempCode).empty()) {
+        cout << "Course not found.\n";
         return false;
     }
 
     cout << "Enter teacher id: ";
+    string tempId;
     getline(cin, tempId);
     tempId = trim(tempId);
 
-    if (!tempId.empty()) {
-        if (readTxtFile(TEACHER_FILE, 0, tempId).empty()) {
-            cout << "Teacher " << tempId << " doesn't exists." << endl;
-            return false;
-        }
-    }
-    else {
-        cout << "Field can't be empty." << endl;
+    if (tempId.empty() || readTxtFile(TEACHER_FILE, 0, tempId).empty()) {
+        cout << "Teacher not found.\n";
         return false;
     }
 
     vector<string> courseDetails = readTxtFile(COURSE_FILE, 0, tempCode)[0];
-    string newTeacher = "";
-    for (auto c : split(courseDetails[2])) {
-        if (c != tempId)
-            newTeacher += c + " ";
-    }
+    vector<string> assigned = split(courseDetails[3]);
+    assigned.erase(remove(assigned.begin(), assigned.end(), tempId), assigned.end());
+    courseDetails[3] = assigned.empty() ? "-" : joinVector(assigned);
 
-    newTeacher = trim(newTeacher);
-
-    if (newTeacher.empty())
-        newTeacher = "-";
-
-    cout << newTeacher;
-
-    return updateTxtFile(COURSE_FILE, 0, tempCode, { courseDetails[0], courseDetails[1], newTeacher });
+    return updateTxtFile(COURSE_FILE, 0, tempCode, courseDetails);
 }
 
+// -------------------
+// Reports
+// -------------------
 vector<string> Course::getEnrolledCourses(string studentId) {
-    string tempId;
-
     if (studentId.empty()) {
         cout << "Enter student id: ";
-        getline(cin, tempId);
-        tempId = trim(tempId);
-
-        if (!tempId.empty()) {
-            if (readTxtFile(STUDENT_FILE, 0, tempId).empty()) {
-                cout << "Student " << tempId << " doesn't exists." << endl;
-                return {};
-            }
-        }
-        else {
-            cout << "Field can't be empty." << endl;
+        getline(cin, studentId);
+        studentId = trim(studentId);
+        if (studentId.empty() || readTxtFile(STUDENT_FILE, 0, studentId).empty()) {
+            cout << "Student not found.\n";
             return {};
         }
     }
-    else
-        tempId = studentId;
 
-    vector<string> targetRow = readTxtFile(GRADE_FILE, 0, tempId)[0];
-    vector<string> topRow = readTxtFile(GRADE_FILE)[0];
-    vector<string> enrolledCourses;
+    auto targetRow = readTxtFile(GRADE_FILE, 0, studentId)[0];
+    auto topRow = readTxtFile(GRADE_FILE)[0];
+    vector<string> enrolled;
 
-    for (int i = 1; i < topRow.size(); i++) {
-        if (targetRow[i] != "- -") enrolledCourses.push_back(topRow[i]);
-    }
+    for (size_t i = 1; i < topRow.size(); ++i)
+        if (targetRow[i] != "- -") enrolled.push_back(topRow[i]);
 
-    if (enrolledCourses.empty()) cout << "Student " << tempId << " not enrolled in any courses." << endl;
-
-    return enrolledCourses;
+    return enrolled;
 }
 
 void Course::generateReport(string studentId) {
-    string tempId;
-
     if (studentId.empty()) {
         cout << "Enter student id: ";
-        getline(cin, tempId);
-        tempId = trim(tempId);
-
-        if (!tempId.empty()) {
-            if (readTxtFile(STUDENT_FILE, 0, tempId).empty()) {
-                cout << "Student " << tempId << " doesn't exists." << endl;
-                return;
-            }
-        }
-        else {
-            cout << "Field can't be empty." << endl;
+        getline(cin, studentId);
+        studentId = trim(studentId);
+        if (studentId.empty() || readTxtFile(STUDENT_FILE, 0, studentId).empty()) {
+            cout << "Student not found.\n";
             return;
         }
     }
-    else tempId = studentId;
 
-    vector<vector<string>> studentDetails = readTxtFile(STUDENT_FILE, 0, tempId);
-    vector<string> enrolledCourses = getEnrolledCourses(tempId);
-    int noOfCourse = 0;
-    float avgFinalScore = 0.0;
-    string overallGrade = "-";
+    auto studentDetails = readTxtFile(STUDENT_FILE, 0, studentId)[0];
+    auto enrolledCourses = getEnrolledCourses(studentId);
 
-    cout << "==============================================" << endl;
-    cout << "------------STUDENT ACADEMIC REPORT-----------" << endl;
-    cout << "==============================================" << endl;
-    cout << endl;
-    cout << "Student Details: " << endl;
-    cout << "Student Id: " << tempId << endl;
-    cout << "Name: " << studentDetails[0][1] << endl;
-    cout << "Email: " << studentDetails[0][3] << endl;
-    cout << "----------------------------------------------" << endl;
-    cout << "Course Enrollment & Performance" << endl;
-    cout << "----------------------------------------------" << endl;
+    cout << "Student Id: " << studentId << "\nName: " << studentDetails[1] << "\nEmail: " << studentDetails[3] << "\n";
 
-    if (enrolledCourses.empty()) cout << "Student not enrolled in any courses." << endl;
-    else {
-        for (auto c : enrolledCourses) {
-            vector<string> mark = getMarks(tempId, c);
-
-            if (mark.size() != 2) {
-                cout << mark[0] << endl;
-                continue;
-            }
-
-            cout << "Course: " << c << " (" << c << ")" << endl;
-            cout << "- Internal Assessment(30 %) : " << mark[0] << " / 100" << endl;
-            cout << "- Final Assessment(70 %) : " << mark[1] << " / 100" << endl;
-
-            float finalScore = stoi(mark[0]) * 0.3 + stoi(mark[1]) * 0.7;
-            avgFinalScore += finalScore;
-            cout << "- Final Score : " << to_string(finalScore) << " / 100" << endl;
-            cout << "- Grade : " << calculateGrade(finalScore) << endl;
-            cout << endl;
+    double avgScore = 0;
+    if (!enrolledCourses.empty()) {
+        for (auto& c : enrolledCourses) {
+            auto marks = getMarks(studentId, c);
+            double score = stoi(marks[0]) * 0.3 + stoi(marks[1]) * 0.7;
+            avgScore += score;
+            cout << "Course: " << c << " | Internal: " << marks[0] << " | Final: " << marks[1]
+                << " | Score: " << score << " | Grade: " << calculateGrade(score) << "\n";
         }
-
-        noOfCourse = enrolledCourses.size();
-        avgFinalScore /= enrolledCourses.size();
-        overallGrade = calculateGrade(avgFinalScore);
+        avgScore /= enrolledCourses.size();
+        cout << "Average Score: " << avgScore << " | Overall Grade: " << calculateGrade(avgScore) << "\n";
     }
-
-    cout << "----------------------------------------------" << endl;
-    cout << "Overall Academic Progress:" << endl;
-    cout << "----------------------------------------------" << endl;
-    cout << "Number of Courses : " << to_string(noOfCourse) << endl;
-    cout << "Average Final Score : " << to_string(avgFinalScore) << endl;
-    cout << "Overall Grade : " << overallGrade << endl;
-    cout << "==============================================" << endl;
+    else {
+        cout << "No courses enrolled.\n";
+    }
 }
 
 void Course::show() {

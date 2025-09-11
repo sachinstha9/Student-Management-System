@@ -10,6 +10,7 @@
 
 using namespace std;
 
+// Split a string by a given delimiter
 vector<string> split(string str, char delimiter) {
     if (str.empty())
         return { "" };
@@ -25,6 +26,7 @@ vector<string> split(string str, char delimiter) {
     return tokens;
 }
 
+// Trim whitespace from start and end of a string
 string trim(const string& s) {
     if (s.empty())
         return "";
@@ -40,6 +42,7 @@ string trim(const string& s) {
     return (start < end) ? string(start, end) : "";
 }
 
+// Check if email is valid using regex
 bool isValidEmail(const string& email) {
     if (email.empty())
         return false;
@@ -48,6 +51,7 @@ bool isValidEmail(const string& email) {
     return regex_match(email, pattern);
 }
 
+// Get today's date in YYYY-MM-DD format
 string getTodayDate() {
     time_t t = time(nullptr);
     tm tm_buf{};
@@ -58,6 +62,7 @@ string getTodayDate() {
     return oss.str();
 }
 
+// Check if command is valid and user has access
 bool checkCommandValidity(string command, vector<vector<string>> defCommands, int userType) {
     int i = 0;
     for (i = 0; i < defCommands.size(); i++) {
@@ -74,24 +79,28 @@ bool checkCommandValidity(string command, vector<vector<string>> defCommands, in
     vector<string> validUsers = split(defCommands[i][2]);
 
     if (find(validUsers.begin(), validUsers.end(), to_string(userType)) == validUsers.end() && validUsers[0] != "0") {
-        for (auto c : validUsers) {
-            cout << "You must be ";
+        cout << "You must be ";
 
-            if (c == "1")
+        for (size_t i = 0; i < validUsers.size(); ++i) {
+            if (validUsers[i] == "1")
                 cout << "Admin";
-            else if (c == "2")
+            else if (validUsers[i] == "2")
                 cout << "Teacher";
-            else if (c == "3")
+            else if (validUsers[i] == "3")
                 cout << "Student";
 
-            cout << " to excute this command." << endl;
+            if (i != validUsers.size() - 1)
+                cout << " or "; // add "or" between roles
         }
+
+        cout << " to execute this command." << endl;
         return false;
     }
 
     return true;
 }
 
+// Print a table with optional sorting
 void printTable(const vector<vector<string>>& table, int sortByColumn, bool ascending) {
     if (table.empty()) return;
 
@@ -101,6 +110,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
 
     vector<vector<string>> sortedTable = table;
 
+    // Sort by column if specified
     if (sortByColumn >= 0 && sortByColumn < numCols) {
         sort(sortedTable.begin() + 1, sortedTable.end(), [&](const vector<string>& a, const vector<string>& b) {
             string valA = (sortByColumn < a.size()) ? a[sortByColumn] : "";
@@ -109,11 +119,13 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
             });
     }
 
+    // Calculate column widths
     vector<size_t> colWidths(numCols, 0);
     for (const auto& row : sortedTable)
         for (size_t i = 0; i < row.size(); ++i)
             colWidths[i] = max(colWidths[i], row[i].length());
 
+    // Lambda to print table border
     auto printBorder = [&]() {
         cout << "+";
         for (auto width : colWidths)
@@ -121,6 +133,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
         cout << '\n';
         };
 
+    // Lambda to print a single row
     auto printRow = [&](const vector<string>& row) {
         cout << "|";
         for (size_t i = 0; i < numCols; ++i) {
@@ -135,7 +148,7 @@ void printTable(const vector<vector<string>>& table, int sortByColumn, bool asce
     for (const auto& row : sortedTable) {
         printRow(row);
         if (isHeader) {
-            printBorder();
+            printBorder(); // Separate header from data
             isHeader = false;
         }
     }

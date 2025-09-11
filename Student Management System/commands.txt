@@ -1,26 +1,27 @@
 Command|Function|access(0-anyone,1-admin,2-teacher,3-student)
+login|To log in to the system|0
 exit|To exit program|0
 help|To get valid commands|0
-add student||1 2
-delete student||1 2
-edit student||1 2 3
-add teacher||1
-delete teacher||1
-edit teacher||1 2
-add course||1 2
-delete course||1 2
-edit course||1 2
-add admin||1
-delete admin||1
-edit admin||1
-edit mark||1 2
-enroll course||1 2 3
-disenroll course||1 2 3
-assign teacher||1
-disassign teacher||1 2
-show enroll-course||1 2 3
-show report||1 2 3
-show teacher||0
-show course||0
-show student||0
-logout||0
+add student|To add a new student|1 2
+delete student|To delete an existing student|1 2
+edit student|To edit student information|1 2 3
+add teacher|To add a new teacher|1
+delete teacher|To delete an existing teacher|1
+edit teacher|To edit teacher information|1 2
+add course|To add a new course|1 2
+delete course|To delete a course|1 2
+edit course|To edit course information|1 2
+add admin|To add a new admin|1
+delete admin|To delete an admin|1
+edit admin|To edit admin information|1
+edit mark|To edit student marks|1 2
+enroll course|To enroll a student in a course|1 2 3
+disenroll course|To remove a student from a course|1 2 3
+assign teacher|To assign a teacher to a course|1
+disassign teacher|To remove a teacher from a course|1 2
+show enroll-course|To display courses a student is enrolled in|1 2 3
+show report|To display student reports|1 2 3
+show teacher|To display teacher information|0
+show course|To display course information|0
+show student|To display student information|0
+logout|To log out of the system|0

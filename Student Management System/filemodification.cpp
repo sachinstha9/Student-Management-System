@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// Read a text file and optionally filter by a specific column value
 vector<vector<string>> readTxtFile(
     const string& filename,
     int colNumber,
@@ -27,10 +28,11 @@ vector<vector<string>> readTxtFile(
         stringstream ss(line);
         string field;
 
-        while (getline(ss, field, '|')) {
+        while (getline(ss, field, '|')) { // Split line by '|'
             row.push_back(field);
         }
 
+        // Filter by column if colNumber is specified
         if (colNumber == -1 ||
             (colNumber >= 0 && colNumber < row.size() && row[colNumber] == colValue)) {
             data.push_back(row);
@@ -41,6 +43,7 @@ vector<vector<string>> readTxtFile(
     return data;
 }
 
+// Write data to a text file, optionally appending
 bool writeTxtFile(
     const string& filename,
     const vector<vector<string>>& data,
@@ -52,7 +55,7 @@ bool writeTxtFile(
         outputFile.open(filename, ios::out | ios::app);
     }
     else {
-        outputFile.open(filename, ios::out | ios::trunc);
+        outputFile.open(filename, ios::out | ios::trunc); // overwrite
     }
 
     if (outputFile.is_open()) {
@@ -60,19 +63,19 @@ bool writeTxtFile(
             for (size_t i = 0; i < row.size(); ++i) {
                 outputFile << row[i];
                 if (i < row.size() - 1) {
-                    outputFile << "|";
+                    outputFile << "|"; // column separator
                 }
             }
             outputFile << "\n";
         }
         outputFile.close();
-
         return true;
     }
     else
         return false;
 }
 
+// Add a new column to an existing text file
 bool addColumnToTxtFile(
     const string& filename,
     const vector<string>& newColumnData
@@ -112,27 +115,24 @@ bool addColumnToTxtFile(
     }
 
     // Write updated data back to file
-    return writeTxtFile(filename, fileData, false);  // overwrite mode
+    return writeTxtFile(filename, fileData, false);  // overwrite
 }
 
-
+// Delete a row from a text file based on a column match
 bool deleteRowTxtFile(
     const string& filename,
     size_t matchColumnIndex,
     const string& matchValue
 ) {
     auto data = readTxtFile(filename);
-
     bool found = false;
-
     vector<vector<string>> updatedData;
 
     for (const auto& row : data) {
         if (row.size() > matchColumnIndex && row[matchColumnIndex] == matchValue) {
-            found = true;
+            found = true; // skip this row
             continue;
         }
-
         updatedData.push_back(row);
     }
 
@@ -144,6 +144,7 @@ bool deleteRowTxtFile(
     }
 }
 
+// Update a row in a text file based on a column match
 bool updateTxtFile(
     const string& filename,
     size_t matchColumnIndex,
@@ -156,12 +157,12 @@ bool updateTxtFile(
     for (auto& row : data) {
         if (row.size() > matchColumnIndex && row[matchColumnIndex] == matchValue) {
             if (row.size() < newRow.size()) {
-                row.resize(newRow.size());
+                row.resize(newRow.size()); // resize if new row is bigger
             }
 
             for (size_t i = 0; i < newRow.size(); ++i) {
                 if (newRow[i] != "")
-                    row[i] = newRow[i];
+                    row[i] = newRow[i]; // update non-empty fields
             }
 
             found = true;
@@ -170,7 +171,7 @@ bool updateTxtFile(
     }
 
     if (found) {
-        return writeTxtFile(filename, data, false);
+        return writeTxtFile(filename, data, false); // overwrite
     }
     else {
         return false;
